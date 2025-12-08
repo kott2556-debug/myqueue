@@ -1,0 +1,36 @@
+name: booking
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+
+  url_launcher: ^6.3.0
+  
+  firebase_core: ^4.2.1 
+  firebase_auth: ^6.1.2
+  cloud_firestore: ^6.1.0
+
+  # 👇 เพิ่มเฉพาะบรรทัดนี้เพื่อทำเว็บให้เป็นขนาดมือถือ
+  responsive_framework: ^0.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+
+  uses-material-design: true
+
+  assets:
+    - assets/images/

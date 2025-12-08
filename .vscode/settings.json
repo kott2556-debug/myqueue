@@ -1,0 +1,52 @@
+{
+    // ============================
+    // 🚀 AI Suggestion แบบ "กำหนดเอง"
+    // ============================
+    // ปิด ghost text (สำคัญที่สุด)
+    "editor.inlineSuggest.enabled": false,
+    // ไม่ให้แนะนำเมื่อพิมพ์ ., (, {
+    "editor.suggestOnTriggerCharacters": false,
+    // เปิดแนะนำเฉพาะโค้ดปกติ
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": false,
+        "strings": false
+    },
+    // เลือก suggestion ต่อเมื่อเรากดเอง
+    "editor.suggest.selectionMode": "always",
+    // ============================
+    // ✨ Flutter/Dart
+    // ============================
+    // จัดโค้ดทุกครั้งที่กด Save
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    // จัด import ให้สวยอัตโนมัติ
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "always",
+        "source.organizeImports": "always"
+    },
+    // Auto import อัตโนมัติ
+    "dart.addSdkToPath": true,
+    "dart.updateImportsOnRename": true,
+    "dart.completeFunctionCalls": true,
+    // ตัวช่วยมุมมอง UI ของ Flutter
+    "dart.previewFlutterUiGuides": true,
+    // เปิดการตรวจโค้ดแบบฉลาดขึ้น
+    "dart.analysisServerFollowsImports": "both",
+    // ============================
+    // 👁️ UI VS Code ดูง่ายขึ้น
+    // ============================
+    // minimap แบบไม่รก
+    "editor.minimap.enabled": true,
+    "editor.minimap.renderCharacters": false,
+    "editor.minimap.scale": 1,
+    // ฟอนต์อ่านง่าย
+    "editor.fontFamily": "'Cascadia Code', Consolas, 'Courier New', monospace",
+    "editor.fontLigatures": true,
+    // ขนาดตัวอักษร
+    "editor.fontSize": 16,
+    // highlight บรรทัดปัจจุบัน
+    "editor.renderLineHighlight": "all",
+    // เว้นระยะบรรทัดให้โค้ดอ่านง่าย
+    "editor.lineHeight": 22
+}

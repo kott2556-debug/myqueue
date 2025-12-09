@@ -11,7 +11,12 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: null,
-        backgroundColor: const Color.fromARGB(255, 3, 118, 211), // <<< ใส่สี AppBar ที่นี่
+        backgroundColor: const Color.fromARGB(
+          255,
+          3,
+          118,
+          211,
+        ), // <<< ใส่สี AppBar ที่นี่
         centerTitle: true, // <<< จัดกลาง
         title: Text(
           'ร้านตัดผมชาย Barber.com',
@@ -29,17 +34,14 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             children: [
               Image.asset("assets/images/logo.png"),
+              SizedBox(height: 16.0),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  // ▼▼▼ แทรกตรงนี้ครับ (บรรทัดที่เพิ่มเข้ามา) ▼▼▼
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors
-                        .green, // เปลี่ยนสีปุ่มตรงนี้ (เช่น Colors.blue, Colors.orange)
-                    foregroundColor:
-                        Colors.white, // เปลี่ยนสีตัวอักษรและไอคอนเป็นสีขาว
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
                   ),
-                  // ▲▲▲ สิ้นสุดส่วนที่เพิ่ม ▲▲▲
                   icon: Icon(Icons.add),
                   label: Text("ลงชื่อ", style: TextStyle(fontSize: 20)),
                   onPressed: () {
@@ -55,17 +57,14 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
+              SizedBox(height: 16.0),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  // ▼▼▼ แทรกตรงนี้ครับ (บรรทัดที่เพิ่มเข้ามา) ▼▼▼
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors
-                        .blue, // เปลี่ยนสีปุ่มตรงนี้ (เช่น Colors.blue, Colors.orange)
-                    foregroundColor:
-                        Colors.white, // เปลี่ยนสีตัวอักษรและไอคอนเป็นสีขาว
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
                   ),
-                  // ▲▲▲ สิ้นสุดส่วนที่เพิ่ม ▲▲▲
                   icon: Icon(Icons.login),
                   label: Text(
                     "จองคิวตัดผมวันพรุ่งนี้",
@@ -84,17 +83,14 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
+              SizedBox(height: 16.0),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  // ▼▼▼ แทรกตรงนี้ครับ (บรรทัดที่เพิ่มเข้ามา) ▼▼▼
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors
-                        .orange, // เปลี่ยนสีปุ่มตรงนี้ (เช่น Colors.blue, Colors.orange)
-                    foregroundColor:
-                        Colors.white, // เปลี่ยนสีตัวอักษรและไอคอนเป็นสีขาว
+                    backgroundColor: Colors.orange,
+                    foregroundColor: Colors.white,
                   ),
-                  // ▲▲▲ สิ้นสุดส่วนที่เพิ่ม ▲▲▲
                   icon: Icon(Icons.queue),
                   label: Text(
                     "ดูคิวตัดผมวันนี้",

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:booking/screen/home.dart';
+import 'package:flutter/material.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 void main() {
@@ -31,9 +31,7 @@ class MyApp extends StatelessWidget {
         ],
       ),
 
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
 
       home: HomeScreen(),
     );

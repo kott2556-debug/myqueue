@@ -55,6 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       profile.phone = phone ?? "";
                     },
                   ),
+                  SizedBox(height: 50),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -68,6 +69,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       onPressed: () {
                         if (formkey.currentState != null) {
                           formkey.currentState!.save();
+                        }
+                        // ignore: avoid_print
+                        // ⭐ ตรวจว่าชื่อหรือเบอร์โทรว่างไหม
+                        if (profile.name.isEmpty || profile.phone.isEmpty) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text("แจ้งเตือน"),
+                              content: Text("กรุณากรอกข้อมูลให้ครบถ้วน"),
+                              actions: [
+                                TextButton(
+                                  child: Text("OK"),
+                                  onPressed: () => Navigator.of(context).pop(),
+                                ),
+                              ],
+                            ),
+                          );
+                          return; // ❗ หยุดไม่ให้ไปหน้า Home
                         }
                         // ignore: avoid_print
                         print(

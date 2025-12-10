@@ -2,26 +2,41 @@ import 'package:booking/screen/jongqueue.dart';
 import 'package:booking/screen/myqueue.dart';
 import 'package:booking/screen/register.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String? username;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      username = prefs.getString("username");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: null,
-        backgroundColor: const Color.fromARGB(
-          255,
-          3,
-          118,
-          211,
-        ), // <<< ใส่สี AppBar ที่นี่
-        centerTitle: true, // <<< จัดกลาง
+        backgroundColor: const Color.fromARGB(255, 3, 118, 211),
+        centerTitle: true,
         title: Text(
           'ร้านตัดผมชาย Barber.com',
           style: TextStyle(
-            color: Colors.white, // <<< สีตัวหนังสือ
+            color: Colors.white,
             fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
@@ -34,30 +49,46 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             children: [
               Image.asset("assets/images/logo.png"),
-              SizedBox(height: 16.0),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                  ),
-                  icon: Icon(Icons.add),
-                  label: Text("ลงชื่อ", style: TextStyle(fontSize: 20)),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return RegisterScreen();
+              SizedBox(height: 16),
+
+              // ⭐ ถ้ายังไม่ลงชื่อ → แสดงปุ่มลงชื่อ
+              // ⭐ ถ้าลงชื่อแล้ว → แสดงข้อความยินดีต้อนรับ
+              username == null
+                  ? SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                        ),
+                        icon: Icon(Icons.add),
+                        label: Text("ลงชื่อ", style: TextStyle(fontSize: 20)),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return RegisterScreen();
+                              },
+                            ),
+                          );
                         },
                       ),
-                    );
-                  },
-                ),
-              ),
+                    )
+                  : Container(
+                      padding: EdgeInsets.all(12),
+                      child: Text(
+                        "ยินดีต้อนรับคุณ $username",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ),
 
-              SizedBox(height: 16.0),
+              SizedBox(height: 16),
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -73,17 +104,14 @@ class HomeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return Login();
-                        },
-                      ),
+                      MaterialPageRoute(builder: (context) => Login()),
                     );
                   },
                 ),
               ),
 
-              SizedBox(height: 16.0),
+              SizedBox(height: 16),
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -99,11 +127,7 @@ class HomeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return Myqueue();
-                        },
-                      ),
+                      MaterialPageRoute(builder: (context) => Myqueue()),
                     );
                   },
                 ),

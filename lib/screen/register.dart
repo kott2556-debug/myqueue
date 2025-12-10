@@ -1,6 +1,7 @@
 import 'package:booking/model/profile.dart';
 import 'package:booking/screen/home.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -18,90 +19,86 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: null,
-        backgroundColor: Colors.green, // <<< ใส่สี AppBar ที่นี่
-        centerTitle: true, // <<< จัดกลาง
+        backgroundColor: Colors.green,
+        centerTitle: true,
         title: Text(
           'ร้านตัดผมชาย Barber.com',
           style: TextStyle(
-            color: Colors.white, // <<< สีตัวหนังสือ
+            color: Colors.white,
             fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
         ),
       ),
-      // ignore: avoid_unnecessary_containers
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Form(
-            key: formkey,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("ชื่อ", style: TextStyle(fontSize: 20)),
-                  TextFormField(
-                    keyboardType: TextInputType.text,
-                    onSaved: (String? name) {
-                      profile.name = name ?? "";
-                    },
-                  ),
-                  SizedBox(height: 15),
-                  Text("เบอร์โทร", style: TextStyle(fontSize: 20)),
-                  TextFormField(
-                    keyboardType: TextInputType.phone,
-                    onSaved: (String? phone) {
-                      profile.phone = phone ?? "";
-                    },
-                  ),
-                  SizedBox(height: 50),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors
-                            .green, // เปลี่ยนสีปุ่มตรงนี้ (เช่น Colors.blue, Colors.orange)
-                        foregroundColor:
-                            Colors.white, // เปลี่ยนสีตัวอักษรและไอคอนเป็นสีขาว
-                      ),
-                      child: Text("บันทึก", style: TextStyle(fontSize: 20)),
-                      onPressed: () {
-                        if (formkey.currentState != null) {
-                          formkey.currentState!.save();
-                        }
-                        // ignore: avoid_print
-                        // ⭐ ตรวจว่าชื่อหรือเบอร์โทรว่างไหม
-                        if (profile.name.isEmpty || profile.phone.isEmpty) {
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text("แจ้งเตือน"),
-                              content: Text("กรุณากรอกข้อมูลให้ครบถ้วน"),
-                              actions: [
-                                TextButton(
-                                  child: Text("OK"),
-                                  onPressed: () => Navigator.of(context).pop(),
-                                ),
-                              ],
-                            ),
-                          );
-                          return; // ❗ หยุดไม่ให้ไปหน้า Home
-                        }
-                        // ignore: avoid_print
-                        print(
-                          "name = ${profile.name} phone = ${profile.phone}",
-                        );
-                        formkey.currentState?.reset();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomeScreen()),
-                        );
-                      },
+
+      body: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: Form(
+          key: formkey,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("ชื่อ", style: TextStyle(fontSize: 20)),
+                TextFormField(
+                  keyboardType: TextInputType.text,
+                  onSaved: (String? name) {
+                    profile.name = name ?? "";
+                  },
+                ),
+                SizedBox(height: 15),
+
+                Text("เบอร์โทร", style: TextStyle(fontSize: 20)),
+                TextFormField(
+                  keyboardType: TextInputType.phone,
+                  onSaved: (String? phone) {
+                    profile.phone = phone ?? "";
+                  },
+                ),
+                SizedBox(height: 50),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
                     ),
+                    child: Text("บันทึก", style: TextStyle(fontSize: 20)),
+                    onPressed: () async {
+                      formkey.currentState!.save();
+
+                      // ⭐ ตรวจว่าช่องว่างไหม
+                      if (profile.name.isEmpty || profile.phone.isEmpty) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            content: Text("กรุณากรอกข้อมูลให้ครบถ้วน"),
+                            actions: [
+                              TextButton(
+                                child: Text("OK"),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                            ],
+                          ),
+                        );
+                        return;
+                      }
+
+                      // ⭐ บันทึกลง SharedPreferences
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString("username", profile.name);
+                      await prefs.setString("phone", profile.phone);
+
+                      // ⭐ กลับหน้าโฮมและไม่ย้อนกลับได้
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                      );
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

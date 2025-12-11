@@ -1,10 +1,11 @@
+// ignore_for_file: avoid_web_libraries_in_flutter
+
 import 'package:booking/screen/jongqueue.dart';
 import 'package:booking/screen/myqueue.dart';
 import 'package:booking/screen/register.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:booking/screen/exit_screen.dart';
-// ใช้ปิดเว็บ (เฉพาะ Flutter Web)
+// ignore: deprecated_member_use
 import 'dart:html' as html;
 
 class HomeScreen extends StatefulWidget {
@@ -16,6 +17,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String? username;
+  bool isRegistered = false;
+  bool isBooked = false;
 
   @override
   void initState() {
@@ -25,8 +28,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> loadUser() async {
     final prefs = await SharedPreferences.getInstance();
+
     setState(() {
       username = prefs.getString('name');
+      isRegistered = prefs.getBool('registered') ?? false;
+      isBooked = prefs.getBool('booked') ?? false;
     });
   }
 
@@ -39,20 +45,19 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("ยืนยันการออกจากระบบ"),
-        content: Text("คุณต้องการออกจากระบบหรือไม่?"),
+        title: const Text("ยืนยันการออกจากระบบ"),
+        content: const Text("คุณต้องการออกจากระบบหรือไม่?"),
         actions: [
           TextButton(
-            child: Text("ยกเลิก"),
+            child: const Text("ยกเลิก"),
             onPressed: () => Navigator.pop(context),
           ),
           TextButton(
-            child: Text("OK"),
+            child: const Text("OK"),
             onPressed: () async {
-              Navigator.pop(context); // ปิด dialog
+              Navigator.pop(context);
               await logout();
 
-              // ⭐ ปิดแท็บเบราว์เซอร์แบบสำเร็จจริง 100%
               html.window.open("about:blank", "_self");
               html.window.close();
             },
@@ -67,9 +72,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Color.fromARGB(255, 3, 118, 211),
+        backgroundColor: const Color.fromARGB(255, 3, 118, 211),
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'ร้านตัดผมชาย Barber.com',
           style: TextStyle(
             color: Colors.white,
@@ -84,9 +89,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             children: [
               Image.asset("assets/images/logo.png"),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
 
-              // ⭐ ปุ่มเดิมทั้งหมด (ไม่แตะต้อง)
+              // ⭐ ปุ่มลงชื่อ
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -94,13 +99,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
                   ),
-                  icon: Icon(Icons.add),
+                  icon: const Icon(Icons.add),
                   label: Text(
                     username == null ? "ลงชื่อ" : "ยินดีต้อนรับคุณ $username",
-                    style: TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 20),
                   ),
                   onPressed: () {
                     if (username != null) return;
+
+                    SharedPreferences.getInstance().then((prefs) {
+                      prefs.setBool("registered", true);
+                    });
 
                     Navigator.push(
                       context,
@@ -110,52 +119,66 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
 
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
+
+              // ⭐ ปุ่มจองคิว — ต้องลงชื่อก่อน
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor:
+                        isRegistered ? Colors.blue : Colors.grey,
                     foregroundColor: Colors.white,
                   ),
-                  icon: Icon(Icons.login),
-                  label: Text(
+                  icon: const Icon(Icons.login),
+                  label: const Text(
                     "จองคิวตัดผมวันพรุ่งนี้",
                     style: TextStyle(fontSize: 20),
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => Login()),
-                    );
-                  },
+                  onPressed: isRegistered
+                      ? () async {
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setBool("booked", true);
+
+                          Navigator.push(
+                            // ignore: use_build_context_synchronously
+                            context,
+                            MaterialPageRoute(builder: (_) => Login()),
+                          );
+                        }
+                      : null, // ❗ ปิดปุ่มถ้ายังไม่ลงชื่อ
                 ),
               ),
 
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
+
+              // ⭐ ปุ่มดูคิว — ต้องจองคิวแล้ว
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
+                    backgroundColor:
+                        isBooked ? Colors.orange : Colors.grey,
                     foregroundColor: Colors.white,
                   ),
-                  icon: Icon(Icons.queue),
-                  label: Text(
+                  icon: const Icon(Icons.queue),
+                  label: const Text(
                     "ดูคิวตัดผมวันนี้",
                     style: TextStyle(fontSize: 20),
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => Myqueue()),
-                    );
-                  },
+                  onPressed: isBooked
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => Myqueue()),
+                          );
+                        }
+                      : null, // ❗ ปิดปุ่มจนกว่าจะจองคิวแล้ว
                 ),
               ),
 
-              // ⭐⭐⭐ เพิ่มปุ่มออกจากระบบ ⭐⭐⭐
-              SizedBox(height: 70.0),
+              // ⭐ ปุ่มออกจากระบบ (โค้ดเดิม)
+              const SizedBox(height: 70.0),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -163,40 +186,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
                   ),
-                  icon: Icon(Icons.logout),
-                  label: Text("ออกจากระบบ", style: TextStyle(fontSize: 20)),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        title: Text("ยืนยันการออกจากระบบ"),
-                        content: Text("คุณต้องการออกจากระบบหรือไม่ ?"),
-                        actions: [
-                          TextButton(
-                            child: Text("ยกเลิก"),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          TextButton(
-                            child: Text("OK"),
-                            onPressed: () async {
-                              Navigator.pop(context);
-
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              await prefs.clear();
-
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const ExitScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                  icon: const Icon(Icons.logout),
+                  label:
+                      const Text("ออกจากระบบ", style: TextStyle(fontSize: 20)),
+                  onPressed: confirmLogout,
                 ),
               ),
             ],

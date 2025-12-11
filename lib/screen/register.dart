@@ -21,7 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.green,
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'ร้านตัดผมชาย Barber.com',
           style: TextStyle(
             color: Colors.white,
@@ -30,7 +30,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(30.0),
         child: Form(
@@ -39,24 +38,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("ชื่อ", style: TextStyle(fontSize: 20)),
+                const Text("ชื่อ", style: TextStyle(fontSize: 20)),
                 TextFormField(
                   keyboardType: TextInputType.text,
-                  onSaved: (String? name) {
-                    profile.name = name ?? "";
-                  },
+                  onSaved: (name) => profile.name = name ?? "",
                 ),
-                SizedBox(height: 15),
 
-                Text("เบอร์โทร", style: TextStyle(fontSize: 20)),
+                const SizedBox(height: 15),
+                const Text("เบอร์โทร", style: TextStyle(fontSize: 20)),
                 TextFormField(
                   keyboardType: TextInputType.phone,
-                  onSaved: (String? phone) {
-                    profile.phone = phone ?? "";
-                  },
+                  onSaved: (phone) => profile.phone = phone ?? "",
                 ),
-                SizedBox(height: 50),
 
+                const SizedBox(height: 50),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -64,20 +59,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white,
                     ),
-                    child: Text("บันทึก", style: TextStyle(fontSize: 20)),
+                    child: const Text("บันทึก", style: TextStyle(fontSize: 20)),
                     onPressed: () async {
-                      formkey.currentState!.save();
+                      formkey.currentState?.save();
 
-                      // ⭐ ตรวจว่าช่องว่างไหม
+                      // ❗ ตรวจช่องว่าง
                       if (profile.name.isEmpty || profile.phone.isEmpty) {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            content: Text("กรุณากรอกข้อมูลให้ครบถ้วน"),
+                            content: const Text("กรุณากรอกข้อมูลให้ครบถ้วน"),
                             actions: [
                               TextButton(
-                                child: Text("OK"),
-                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text("OK"),
+                                onPressed: () => Navigator.pop(context),
                               ),
                             ],
                           ),
@@ -85,15 +80,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         return;
                       }
 
-                      // ⭐ บันทึกลง SharedPreferences
+                      // ⭐ บันทึกข้อมูลลง SharedPreferences
                       final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString("username", profile.name);
+                      await prefs.setString("name", profile.name);
                       await prefs.setString("phone", profile.phone);
 
-                      // ⭐ กลับหน้าโฮมและไม่ย้อนกลับได้
+                      // ignore: avoid_print
+                      print(">>> SAVE USER : name=${profile.name} , phone=${profile.phone}");
+
+                      // ⭐ ป้องกัน use_build_context_synchronously
+                      if (!context.mounted) return;
+
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
+                        MaterialPageRoute(builder: (_) => const HomeScreen()),
                       );
                     },
                   ),

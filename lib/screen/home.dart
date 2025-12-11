@@ -3,6 +3,9 @@ import 'package:booking/screen/myqueue.dart';
 import 'package:booking/screen/register.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:booking/screen/exit_screen.dart';
+// ใช้ปิดเว็บ (เฉพาะ Flutter Web)
+import 'dart:html' as html;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,6 +28,38 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       username = prefs.getString('name');
     });
+  }
+
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
+
+  void confirmLogout() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("ยืนยันการออกจากระบบ"),
+        content: Text("คุณต้องการออกจากระบบหรือไม่?"),
+        actions: [
+          TextButton(
+            child: Text("ยกเลิก"),
+            onPressed: () => Navigator.pop(context),
+          ),
+          TextButton(
+            child: Text("OK"),
+            onPressed: () async {
+              Navigator.pop(context); // ปิด dialog
+              await logout();
+
+              // ⭐ ปิดแท็บเบราว์เซอร์แบบสำเร็จจริง 100%
+              html.window.open("about:blank", "_self");
+              html.window.close();
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -51,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Image.asset("assets/images/logo.png"),
               SizedBox(height: 16.0),
 
-              // ⭐ เปลี่ยนข้อความปุ่มอัตโนมัติ
+              // ⭐ ปุ่มเดิมทั้งหมด (ไม่แตะต้อง)
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
@@ -61,13 +96,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   icon: Icon(Icons.add),
                   label: Text(
-                    username == null
-                        ? "ลงชื่อ"
-                        : "ยินดีต้อนรับคุณ $username",
+                    username == null ? "ลงชื่อ" : "ยินดีต้อนรับคุณ $username",
                     style: TextStyle(fontSize: 20),
                   ),
                   onPressed: () {
-                    if (username != null) return; // ❗ ลงชื่อได้ครั้งเดียว
+                    if (username != null) return;
 
                     Navigator.push(
                       context,
@@ -116,6 +149,52 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => Myqueue()),
+                    );
+                  },
+                ),
+              ),
+
+              // ⭐⭐⭐ เพิ่มปุ่มออกจากระบบ ⭐⭐⭐
+              SizedBox(height: 70.0),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                  ),
+                  icon: Icon(Icons.logout),
+                  label: Text("ออกจากระบบ", style: TextStyle(fontSize: 20)),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: Text("ยืนยันการออกจากระบบ"),
+                        content: Text("คุณต้องการออกจากระบบหรือไม่ ?"),
+                        actions: [
+                          TextButton(
+                            child: Text("ยกเลิก"),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          TextButton(
+                            child: Text("OK"),
+                            onPressed: () async {
+                              Navigator.pop(context);
+
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.clear();
+
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const ExitScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     );
                   },
                 ),

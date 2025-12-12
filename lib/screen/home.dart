@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_web_libraries_in_flutter
 
-import 'package:booking/screen/jongqueue.dart';
+import 'package:booking/screen/booking.dart';
 import 'package:booking/screen/myqueue.dart';
 import 'package:booking/screen/register.dart';
 import 'package:flutter/material.dart';
